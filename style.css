@@ -1,8 +1,8 @@
 :root{
   --max-width:900px;
-  --accent:#8B5CF6; /* optional: tombol jadi ungu */
+  --accent:#8B5CF6; 
   --muted:#6b7280;
-  --bg:#C4B5FD;     /* 🎉 background ungu */
+  --bg:#C4B5FD;     
   --card:#ffffff;
   --danger:#ef4444;
   --success:#10b981;
@@ -23,10 +23,27 @@ body{
   padding:24px;
 }
 
-.container{width:100%;max-width:var(--max-width)}
-.site-header{text-align:center;margin-bottom:18px}
-.site-header h1{margin:0;font-size:1.6rem}
-.lead{margin:6px 0 0;color:var(--muted);font-size:0.95rem}
+.container{
+  width:100%;
+  max-width:
+  var(--max-width)
+}
+
+.site-header{
+  text-align:center;
+  margin-bottom:18px
+}
+
+.site-header h1{
+  margin:0;
+  font-size:1.6rem
+}
+
+.lead{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:0.95rem
+}
 
 /* Card */
 .card{
