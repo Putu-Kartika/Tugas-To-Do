@@ -1,9 +1,4 @@
-/* script.js
-   To-Do List Interaktif
-   - Add, Complete (toggle), Delete
-   - Persist to localStorage
-   - DOM traversal via closest / appendChild / querySelector
-*/
+
 
 document.addEventListener('DOMContentLoaded', () => {
   // ----- Elemen DOM -----
