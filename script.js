@@ -25,36 +25,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Form submit: add new todo -----
   form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const text = input.value.trim();
+  e.preventDefault();
+  const text = input.value.trim();
 
-    if (!text) {
-      showError('Nama tugas tidak boleh kosong!');
-      showToast("❗ Tugas tidak boleh kosong!", "error");
-      return;
-    }
-    hideError();
+  if (!text) {
+    showError('Nama tugas tidak boleh kosong!');
+    showToast("❗ Tugas tidak boleh kosong!", "error");
+    return;
+  }
+  hideError();
 
-    const notes = notesInput.value.trim();
+  const notes = notesInput.value.trim();
+  const priority = document.getElementById('todo-priority').value; // ✅ ambil prioritas
 
-    const item = {
-      id: Date.now().toString(),
-      text,
-      notes: notes || "",
-      completed: false
-    };
+  const item = {
+    id: Date.now().toString(),
+    text,
+    notes: notes || "",
+    priority, 
+    completed: false
+  };
 
-    items.push(item);
-    saveToStorage(items);
-    appendItemToDOM(item);
-    updateProgressBar();
+  items.push(item);
+  saveToStorage(items);
+  appendItemToDOM(item);
+  updateProgressBar();
 
-    showToast("➕ Tugas berhasil ditambahkan!", "success");
+  showToast("➕ Tugas berhasil ditambahkan!", "success");
 
-    input.value = '';
-    notesInput.value = '';
-    input.focus();
-  });
+  input.value = '';
+  notesInput.value = '';
+  input.focus();
+});
+
 
   // ----- Event delegation for list (complete / delete) -----
   list.addEventListener('click', (e) => {
@@ -107,10 +110,20 @@ document.addEventListener('DOMContentLoaded', () => {
     li.className = 'todo-item' + (item.completed ? ' completed' : '');
     li.dataset.id = item.id;
 
-    // Judul
-    const title = document.createElement('div');
-    title.className = 'text';
-    title.textContent = item.text;
+  // Judul
+const title = document.createElement('div');
+title.className = 'text';
+title.textContent = item.text;
+
+// Label prioritas
+const priorityLabel = document.createElement('span');
+priorityLabel.className = 'priority-label priority-' + item.priority;
+priorityLabel.textContent = item.priority === 'tinggi' ? '🔴 Tinggi' :
+                            item.priority === 'sedang' ? '🟡 Sedang' :
+                            '🟢 Rendah';
+
+// Append label ke title
+title.appendChild(priorityLabel);
 
     // Catatan
     const notesBox = document.createElement('div');
