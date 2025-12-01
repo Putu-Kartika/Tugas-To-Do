@@ -42,24 +42,47 @@
     </section>
 
     <section class="card">
-      <h2>Daftar Tugas</h2>
+  <h2>Daftar Tugas</h2>
 
-      <!-- Progress Bar -->
-<div class="progress-container">
-  <div class="progress-text">0 dari 0 selesai</div>
-  <div class="progress-bar">
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-text">0 dari 0 selesai</div>
+    <div class="progress-bar">
       <div class="progress-fill"></div>
+    </div>
   </div>
-</div>
 
-      <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
-      <p id="empty-msg" class="empty-msg">Belum ada tugas. Tambahkan tugas baru!</p>
+  <!-- Progress Stars -->
+  <div class="progress-stars">
+    ⭐ Stars: <span id="star-count">0</span>
+  </div>
 
-      <div class="controls">
-        <button id="clear-completed" type="button" class="btn small">Hapus Selesai</button>
-        <button id="clear-all" type="button" class="btn small warn">Kosongkan Semua</button>
-      </div>
-    </section>
+  <!-- Daftar tugas -->
+  <ul id="todo-list" class="todo-list" aria-live="polite">
+    <li class="todo-item">
+      <span class="text">Belajar HTML</span>
+      <button class="btn complete">✔️</button>
+    </li>
+    <li class="todo-item">
+      <span class="text">Baca buku</span>
+      <button class="btn complete">✔️</button>
+    </li>
+  </ul>
+
+  <!-- Reward Popup -->
+  <div id="reward-popup" class="popup hidden">
+    🌸 Good job! Kamu sudah menyelesaikan tugasnya!⭐ 🌸
+  </div>
+
+  
+  <p id="empty-msg" class="empty-msg">Belum ada tugas. Tambahkan tugas baru!</p>
+
+  <div class="controls">
+    <button id="clear-completed" type="button" class="btn small">Hapus Selesai</button>
+    <button id="clear-all" type="button" class="btn small warn">Kosongkan Semua</button>
+  </div>
+</section>
+
   </main>
 
   <footer class="site-footer">
