@@ -53,18 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-    const item = {
-      id: Date.now().toString(),
-      text,
-      completed: false
-    };
-    items.push(item);
-    saveToStorage(items);
-    appendItemToDOM(item);
-    input.value = '';
-    input.focus();
-  });
-
   // ----- Event delegation for list (complete / delete) -----
   list.addEventListener('click', (e) => {
     const target = e.target;
