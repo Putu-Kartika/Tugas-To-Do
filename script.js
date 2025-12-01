@@ -24,14 +24,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Form submit: add new todo -----
   form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const text = input.value.trim();
+  e.preventDefault();
+  const text = input.value.trim();
 
-    if (!text) {
-      showError('Nama tugas tidak boleh kosong!');
-      return;
-    }
-    hideError();
+  // ❗ Toast jika kosong
+  if (!text) {
+    showError('Nama tugas tidak boleh kosong!');
+    showToast("❗ Tugas tidak boleh kosong!", "error");
+    return;
+  }
+  hideError();
+
+  const item = {
+    id: Date.now().toString(),
+    text,
+    completed: false
+  };
+
+  items.push(item);
+  saveToStorage(items);
+  appendItemToDOM(item);
+
+  // ➕ Toast sukses tambah
+  showToast("➕ Tugas berhasil ditambahkan!", "success");
+
+  input.value = '';
+  input.focus();
+});
+
 
     const item = {
       id: Date.now().toString(),
@@ -70,18 +90,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Clear completed -----
   clearCompletedBtn.addEventListener('click', () => {
-    items = items.filter(i => !i.completed);
-    saveToStorage(items);
-    renderList();
-  });
+  items = items.filter(i => !i.completed);
+  saveToStorage(items);
+  renderList();
+
+  showToast("🧹 Tugas selesai dibersihkan!", "success");
+});
+
+
 
   // ----- Clear all (confirm) -----
   clearAllBtn.addEventListener('click', () => {
-    if (!confirm('Yakin ingin menghapus semua tugas?')) return;
-    items = [];
-    saveToStorage(items);
-    renderList();
-  });
+  if (!confirm('Yakin ingin menghapus semua tugas?')) return;
+
+  items = [];
+  saveToStorage(items);
+  renderList();
+
+  showToast("🗑️ Semua tugas dihapus.", "warning");
+});
+
 
   // ----- Functions -----
   function createListItem(item) {
@@ -135,30 +163,42 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function toggleComplete(id, liElement) {
-    const idx = items.findIndex(i => i.id === id);
-    if (idx === -1) return;
-    items[idx].completed = !items[idx].completed;
-    saveToStorage(items);
-    // update DOM
-    if (items[idx].completed) {
-      liElement.classList.add('completed');
-      liElement.querySelector('.btn.complete').textContent = 'Batal';
-      liElement.querySelector('.btn.complete').setAttribute('aria-pressed', 'true');
-    } else {
-      liElement.classList.remove('completed');
-      liElement.querySelector('.btn.complete').textContent = 'Selesai';
-      liElement.querySelector('.btn.complete').setAttribute('aria-pressed', 'false');
-    }
+  const idx = items.findIndex(i => i.id === id);
+  if (idx === -1) return;
+
+  items[idx].completed = !items[idx].completed;
+  saveToStorage(items);
+
+  if (items[idx].completed) {
+    liElement.classList.add('completed');
+    liElement.querySelector('.btn.complete').textContent = 'Batal';
+    liElement.querySelector('.btn.complete').setAttribute('aria-pressed', 'true');
+
+    // ✔️ Toast selesai
+    showToast("✔️ Tugas ditandai selesai!", "success");
+
+  } else {
+    liElement.classList.remove('completed');
+    liElement.querySelector('.btn.complete').textContent = 'Selesai';
+    liElement.querySelector('.btn.complete').setAttribute('aria-pressed', 'false');
+
+    // 🔄 Toast batal selesai (optional)
+    showToast("🔄 Tugas dibatalkan!", "warning");
   }
+}
+
 
   function deleteItem(id, liElement) {
-    // remove from state
-    items = items.filter(i => i.id !== id);
-    saveToStorage(items);
-    // remove from DOM via DOM traversal (liElement adalah parent)
-    liElement.remove();
-    updateEmptyState();
-  }
+  items = items.filter(i => i.id !== id);
+  saveToStorage(items);
+
+  liElement.remove();
+  updateEmptyState();
+
+  // 🗑️ Toast hapus
+  showToast("🗑️ Tugas dihapus.", "warning");
+}
+
 
   function updateEmptyState() {
     emptyMsg.style.display = items.length ? 'none' : 'block';
@@ -192,3 +232,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+// ===========================
+//     TOAST NOTIFICATION
+// ===========================
+function showToast(message, type = "success") {
+    const container = document.getElementById("toast-container");
+
+    const toast = document.createElement("div");
+    toast.classList.add("toast");
+
+    if (type === "success") toast.classList.add("toast-success");
+    if (type === "error") toast.classList.add("toast-error");
+    if (type === "warning") toast.classList.add("toast-warning");
+
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    // Hilang otomatis
+    setTimeout(() => {
+        toast.style.animation = "fadeOut 0.5s forwards";
+        setTimeout(() => toast.remove(), 500);
+    }, 2500);
+}
