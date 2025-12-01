@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const emptyMsg = document.getElementById('empty-msg');
   const clearCompletedBtn = document.getElementById('clear-completed');
   const clearAllBtn = document.getElementById('clear-all');
+  const addBtn = document.getElementById('add-btn');
 
   // ----- Storage key & state -----
   const STORAGE_KEY = 'todo_items_v1';
@@ -17,40 +18,43 @@ document.addEventListener('DOMContentLoaded', () => {
   renderList();
   updateProgressBar();
 
+  // ----- Tombol Tambah -----
+  addBtn.addEventListener('click', () => {
+    form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+  });
+
   // ----- Form submit: add new todo -----
   form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const text = input.value.trim();
+    e.preventDefault();
+    const text = input.value.trim();
 
-  // ❗ Toast jika kosong
-  if (!text) {
-    showError('Nama tugas tidak boleh kosong!');
-    showToast("❗ Tugas tidak boleh kosong!", "error");
-    return;
-  }
-  hideError();
+    if (!text) {
+      showError('Nama tugas tidak boleh kosong!');
+      showToast("❗ Tugas tidak boleh kosong!", "error");
+      return;
+    }
+    hideError();
 
-  const notes = notesInput.value.trim();
+    const notes = notesInput.value.trim();
 
-const item = {
-  id: Date.now().toString(),
-  text,
-  notes: notes || "",   // simpan catatan
-  completed: false
-};
+    const item = {
+      id: Date.now().toString(),
+      text,
+      notes: notes || "",
+      completed: false
+    };
 
+    items.push(item);
+    saveToStorage(items);
+    appendItemToDOM(item);
+    updateProgressBar();
 
-  items.push(item);
-  saveToStorage(items);
-  appendItemToDOM(item);
-  updateProgressBar();
+    showToast("➕ Tugas berhasil ditambahkan!", "success");
 
-  // ➕ Toast sukses tambah
-  showToast("➕ Tugas berhasil ditambahkan!", "success");
-
-  input.value = '';
-  input.focus();
-});
+    input.value = '';
+    notesInput.value = '';
+    input.focus();
+  });
 
   // ----- Event delegation for list (complete / delete) -----
   list.addEventListener('click', (e) => {
@@ -77,86 +81,80 @@ const item = {
 
   // ----- Clear completed -----
   clearCompletedBtn.addEventListener('click', () => {
-  items = items.filter(i => !i.completed);
-  saveToStorage(items);
-  renderList();
-  updateProgressBar();
+    items = items.filter(i => !i.completed);
+    saveToStorage(items);
+    renderList();
+    updateProgressBar();
 
-  showToast("🧹 Tugas selesai dibersihkan!", "success");
-});
-
+    showToast("🧹 Tugas selesai dibersihkan!", "success");
+  });
 
   // ----- Clear all (confirm) -----
   clearAllBtn.addEventListener('click', () => {
-  if (!confirm('Yakin ingin menghapus semua tugas?')) return;
+    if (!confirm('Yakin ingin menghapus semua tugas?')) return;
 
-  items = [];
-  saveToStorage(items);
-  renderList();
-  updateProgressBar();
+    items = [];
+    saveToStorage(items);
+    renderList();
+    updateProgressBar();
 
-  showToast("🗑️ Semua tugas dihapus.", "warning");
-
-});
-
+    showToast("🗑️ Semua tugas dihapus.", "warning");
+  });
 
   // ----- Functions -----
   function createListItem(item) {
-  const li = document.createElement('li');
-  li.className = 'todo-item' + (item.completed ? ' completed' : '');
-  li.dataset.id = item.id;
+    const li = document.createElement('li');
+    li.className = 'todo-item' + (item.completed ? ' completed' : '');
+    li.dataset.id = item.id;
 
-  /* === JUDUL === */
-  const title = document.createElement('div');
-  title.className = 'text';
-  title.textContent = item.text;
+    // Judul
+    const title = document.createElement('div');
+    title.className = 'text';
+    title.textContent = item.text;
 
-  /* === CATATAN (HIDDEN) === */
-  const notesBox = document.createElement('div');
-  notesBox.className = "notes-box";
-  notesBox.style.display = "none";
-  notesBox.textContent = item.notes || "(Tidak ada catatan)";
+    // Catatan
+    const notesBox = document.createElement('div');
+    notesBox.className = "notes-box";
+    notesBox.style.display = "none";
+    notesBox.innerHTML = `
+      <div class="notes-title">Catatan:</div>
+      <div class="notes-content">${item.notes || "(Tidak ada catatan)"}</div>
+    `;
 
-  /* === TOGGLE BUTTON === */
-  const toggleBtn = document.createElement('button');
-  toggleBtn.className = "btn toggle";
-  toggleBtn.textContent = "Detail ▼";
-  toggleBtn.addEventListener('click', () => {
-    if (notesBox.style.display === "none") {
-      notesBox.style.display = "block";
-      toggleBtn.textContent = "Detail ▲";
-    } else {
-      notesBox.style.display = "none";
-      toggleBtn.textContent = "Detail ▼";
-    }
-  });
+    // Toggle detail
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = "btn toggle";
+    toggleBtn.textContent = "Detail ▼";
+    toggleBtn.addEventListener('click', () => {
+      const show = notesBox.style.display === "none";
+      notesBox.style.display = show ? "block" : "none";
+      toggleBtn.textContent = show ? "Detail ▲" : "Detail ▼";
+    });
 
-  /* === ACTION BUTTONS === */
-  const actions = document.createElement('div');
-  actions.className = 'actions';
+    // Action buttons
+    const actions = document.createElement('div');
+    actions.className = 'actions';
 
-  const completeBtn = document.createElement('button');
-  completeBtn.type = 'button';
-  completeBtn.className = 'btn complete';
-  completeBtn.textContent = item.completed ? 'Batal' : 'Selesai';
+    const completeBtn = document.createElement('button');
+    completeBtn.type = 'button';
+    completeBtn.className = 'btn complete';
+    completeBtn.textContent = item.completed ? 'Batal' : 'Selesai';
 
-  const delBtn = document.createElement('button');
-  delBtn.type = 'button';
-  delBtn.className = 'btn delete';
-  delBtn.textContent = 'Hapus';
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'btn delete';
+    delBtn.textContent = 'Hapus';
 
-  actions.appendChild(toggleBtn);
-  actions.appendChild(completeBtn);
-  actions.appendChild(delBtn);
+    actions.appendChild(toggleBtn);
+    actions.appendChild(completeBtn);
+    actions.appendChild(delBtn);
 
-  /* === SUSUN ITEM === */
-  li.appendChild(title);
-  li.appendChild(notesBox);
-  li.appendChild(actions);
+    li.appendChild(title);
+    li.appendChild(notesBox);
+    li.appendChild(actions);
 
-  return li;
-}
-
+    return li;
+  }
 
   function appendItemToDOM(item) {
     const li = createListItem(item);
@@ -168,59 +166,47 @@ const item = {
     list.innerHTML = '';
 
     if (!items.length) {
-        updateEmptyState();
-        updateProgressBar();
-        return;
+      updateEmptyState();
+      updateProgressBar();
+      return;
     }
 
     items.forEach(item => {
-        const li = createListItem(item);
-        list.appendChild(li);
+      const li = createListItem(item);
+      list.appendChild(li);
     });
 
     updateEmptyState();
     updateProgressBar();
-}
-
+  }
 
   function toggleComplete(id, liElement) {
-  const idx = items.findIndex(i => i.id === id);
-  if (idx === -1) return;
+    const idx = items.findIndex(i => i.id === id);
+    if (idx === -1) return;
 
-  items[idx].completed = !items[idx].completed;
-  saveToStorage(items);
-  updateProgressBar();
+    items[idx].completed = !items[idx].completed;
+    saveToStorage(items);
+    updateProgressBar();
 
-  if (items[idx].completed) {
-    liElement.classList.add('completed');
-    liElement.querySelector('.btn.complete').textContent = 'Batal';
-    liElement.querySelector('.btn.complete').setAttribute('aria-pressed', 'true');
-
-    // ✔️ Toast selesai
-    showToast("✔️ Tugas ditandai selesai!", "success");
-
-  } else {
-    liElement.classList.remove('completed');
-    liElement.querySelector('.btn.complete').textContent = 'Selesai';
-    liElement.querySelector('.btn.complete').setAttribute('aria-pressed', 'false');
-
-    // 🔄 Toast batal selesai (optional)
-    showToast("🔄 Tugas dibatalkan!", "warning");
+    if (items[idx].completed) {
+      liElement.classList.add('completed');
+      liElement.querySelector('.btn.complete').textContent = 'Batal';
+      showToast("✔️ Tugas ditandai selesai!", "success");
+    } else {
+      liElement.classList.remove('completed');
+      liElement.querySelector('.btn.complete').textContent = 'Selesai';
+      showToast("🔄 Tugas dibatalkan!", "warning");
+    }
   }
-}
 
   function deleteItem(id, liElement) {
-  items = items.filter(i => i.id !== id);
-  saveToStorage(items);
-  updateProgressBar();
-
-  liElement.remove();
-  updateEmptyState();
-
-  // 🗑️ Toast hapus
-  showToast("🗑️ Tugas dihapus.", "warning");
-
-}
+    items = items.filter(i => i.id !== id);
+    saveToStorage(items);
+    liElement.remove();
+    updateEmptyState();
+    updateProgressBar();
+    showToast("🗑️ Tugas dihapus.", "warning");
+  }
 
   function updateEmptyState() {
     emptyMsg.style.display = items.length ? 'none' : 'block';
@@ -235,12 +221,11 @@ const item = {
     errorMessage.textContent = '';
   }
 
-  // ----- Storage helpers -----
+  // Storage
   function saveToStorage(data) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch (err) {
-      // ignore storage errors
       console.warn('localStorage error', err);
     }
   }
@@ -255,38 +240,36 @@ const item = {
   }
 
   function updateProgressBar() {
-  const done = items.filter(i => i.completed).length;
-  const total = items.length;
-  const percent = total === 0 ? 0 : (done / total) * 100;
+    const done = items.filter(i => i.completed).length;
+    const total = items.length;
+    const percent = total === 0 ? 0 : (done / total) * 100;
 
-  document.querySelector(".progress-text").textContent =
-    `${done} dari ${total} selesai`;
+    document.querySelector(".progress-text").textContent =
+      `${done} dari ${total} selesai`;
 
-  document.querySelector(".progress-fill").style.width = percent + "%";
-}
-
+    document.querySelector(".progress-fill").style.width = percent + "%";
+  }
 });
 
 // ===========================
 //     TOAST NOTIFICATION
 // ===========================
 function showToast(message, type = "success") {
-    const container = document.getElementById("toast-container");
+  const container = document.getElementById("toast-container");
 
-    const toast = document.createElement("div");
-    toast.classList.add("toast");
+  const toast = document.createElement("div");
+  toast.classList.add("toast");
 
-    if (type === "success") toast.classList.add("toast-success");
-    if (type === "error") toast.classList.add("toast-error");
-    if (type === "warning") toast.classList.add("toast-warning");
+  if (type === "success") toast.classList.add("toast-success");
+  if (type === "error") toast.classList.add("toast-error");
+  if (type === "warning") toast.classList.add("toast-warning");
 
-    toast.textContent = message;
+  toast.textContent = message;
 
-    container.appendChild(toast);
+  container.appendChild(toast);
 
-    // Hilang otomatis
-    setTimeout(() => {
-        toast.style.animation = "fadeOut 0.5s forwards";
-        setTimeout(() => toast.remove(), 500);
-    }, 2500);
+  setTimeout(() => {
+    toast.style.animation = "fadeOut 0.5s forwards";
+    setTimeout(() => toast.remove(), 500);
+  }, 2500);
 }
