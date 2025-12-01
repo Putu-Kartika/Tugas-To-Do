@@ -10,7 +10,6 @@
 
 <body>
 
-  <!-- Toast Container -->
   <div id="toast-container"></div>
   
   <header class="site-header">
@@ -39,6 +38,16 @@
 
     <section class="card">
       <h2>Daftar Tugas</h2>
+
+      <!-- Progress Bar -->
+<div class="progress-container">
+  <div class="progress-text">0 dari 0 selesai</div>
+  <div class="progress-bar">
+      <div class="progress-fill"></div>
+  </div>
+</div>
+
+
       <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
       <p id="empty-msg" class="empty-msg">Belum ada tugas. Tambahkan tugas baru!</p>
 
@@ -50,7 +59,7 @@
   </main>
 
   <footer class="site-footer">
-    <small>© 2025 • To-Do List Interaktif</small>
+    <small>© 2025 • To-Do List - Putu Kartika</small>
   </footer>
 
   <script src="script.js" defer></script>
