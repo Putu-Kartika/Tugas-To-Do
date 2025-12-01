@@ -114,13 +114,43 @@ body{
   background:#fff;
 }
 
-.todo-item .text{flex:1;word-break:break-word}
-.todo-item .actions{display:flex;gap:8px}
-.btn{padding:8px 10px;border-radius:6px;border:0;cursor:pointer}
-.small{padding:6px 8px;font-size:0.9rem}
-.btn.complete{background:linear-gradient(#ecfdf5,#ecfdf5);border:1px solid #a7f3d0}
-.btn.delete{background:transparent;border:1px solid #fee2e2;color:var(--danger)}
-.btn.warn{background:transparent;border:1px solid #fef3c7}
+.todo-item .text{
+  flex:1;
+  word-break:break-word
+}
+
+.todo-item .actions{
+  display:flex;
+  gap:8px
+}
+
+.btn{
+  padding:8px 10px;
+  border-radius:6px;
+  border:0;
+  cursor:pointer
+}
+
+.small{
+  padding:6px 8px;
+  font-size:0.9rem
+}
+
+.btn.complete{
+  background:linear-gradient(#ecfdf5,#ecfdf5);
+  border:1px solid #a7f3d0
+}
+
+.btn.delete{
+  background:transparent;
+  border:1px solid #fee2e2;
+  color:var(--danger)
+}
+
+.btn.warn{
+  background:transparent;
+  border:1px solid #fef3c7
+}
 
 /* completed */
 .completed .text{text-decoration:line-through;color:var(--muted);opacity:0.85}
