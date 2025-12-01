@@ -27,8 +27,7 @@ body{
 
 .container{
   width:100%;
-  max-width:
-  var(--max-width)
+  max-width:var(--max-width)
 }
 
 .site-header{
@@ -229,15 +228,15 @@ body{
 
 /* toast warna */
 .toast-success {
-    background: #16a34a;
+    background: #11aa49;
 }
 
 .toast-error {
-    background: #dc2626;
+    background: #d81b1b;
 }
 
 .toast-warning {
-    background: #ca8a04;
+    background: #fcac00;
 }
 
 @keyframes slideIn {
