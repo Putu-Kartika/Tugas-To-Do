@@ -106,68 +106,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Functions -----
   function createListItem(item) {
-    const li = document.createElement('li');
-    li.className = 'todo-item' + (item.completed ? ' completed' : '');
-    li.dataset.id = item.id;
+  const li = document.createElement('li');
+  li.className = 'todo-item' + (item.completed ? ' completed' : '');
+  li.dataset.id = item.id;
 
   // Judul
-const title = document.createElement('div');
-title.className = 'text';
-title.textContent = item.text;
+  const title = document.createElement('div');
+  title.className = 'text';
+  title.textContent = item.text;
 
-// Label prioritas
-const priorityLabel = document.createElement('span');
-priorityLabel.className = 'priority-label priority-' + item.priority;
-priorityLabel.textContent = item.priority === 'tinggi' ? '🔴 Tinggi' :
+  // Label prioritas
+  const priorityLabel = document.createElement('span');
+  priorityLabel.className = 'priority-label priority-' + item.priority;
+  priorityLabel.textContent = item.priority === 'tinggi' ? '🔴 Tinggi' :
                             item.priority === 'sedang' ? '🟡 Sedang' :
                             '🟢 Rendah';
+  priorityLabel.title = "Tingkat prioritas tugas";
 
-// Append label ke title
-title.appendChild(priorityLabel);
+  // Catatan
+  const notesBox = document.createElement('div');
+  notesBox.className = "notes-box";
+  notesBox.style.display = "none";
+  notesBox.innerHTML = `
+    <div class="notes-title">Catatan:</div>
+    <div class="notes-content">${item.notes || "(Tidak ada catatan)"}</div>
+  `;
 
-    // Catatan
-    const notesBox = document.createElement('div');
-    notesBox.className = "notes-box";
-    notesBox.style.display = "none";
-    notesBox.innerHTML = `
-      <div class="notes-title">Catatan:</div>
-      <div class="notes-content">${item.notes || "(Tidak ada catatan)"}</div>
-    `;
+  // Toggle detail
+  const toggleBtn = document.createElement('button');
+  toggleBtn.className = "btn toggle";
+  toggleBtn.textContent = "Detail ▼";
+  toggleBtn.addEventListener('click', () => {
+    const show = notesBox.style.display === "none";
+    notesBox.style.display = show ? "block" : "none";
+    toggleBtn.textContent = show ? "Detail ▲" : "Detail ▼";
+  });
 
-    // Toggle detail
-    const toggleBtn = document.createElement('button');
-    toggleBtn.className = "btn toggle";
-    toggleBtn.textContent = "Detail ▼";
-    toggleBtn.addEventListener('click', () => {
-      const show = notesBox.style.display === "none";
-      notesBox.style.display = show ? "block" : "none";
-      toggleBtn.textContent = show ? "Detail ▲" : "Detail ▼";
-    });
+  // Action buttons
+  const actions = document.createElement('div');
+  actions.className = 'actions';
 
-    // Action buttons
-    const actions = document.createElement('div');
-    actions.className = 'actions';
+  const completeBtn = document.createElement('button');
+  completeBtn.type = 'button';
+  completeBtn.className = 'btn complete';
+  completeBtn.textContent = item.completed ? 'Batal' : 'Selesai';
 
-    const completeBtn = document.createElement('button');
-    completeBtn.type = 'button';
-    completeBtn.className = 'btn complete';
-    completeBtn.textContent = item.completed ? 'Batal' : 'Selesai';
+  const delBtn = document.createElement('button');
+  delBtn.type = 'button';
+  delBtn.className = 'btn delete';
+  delBtn.textContent = 'Hapus';
 
-    const delBtn = document.createElement('button');
-    delBtn.type = 'button';
-    delBtn.className = 'btn delete';
-    delBtn.textContent = 'Hapus';
+  actions.appendChild(toggleBtn);
+  actions.appendChild(completeBtn);
+  actions.appendChild(delBtn);
 
-    actions.appendChild(toggleBtn);
-    actions.appendChild(completeBtn);
-    actions.appendChild(delBtn);
+  
+  li.appendChild(title);
+  li.appendChild(priorityLabel);
+  li.appendChild(notesBox);
+  li.appendChild(actions);
 
-    li.appendChild(title);
-    li.appendChild(notesBox);
-    li.appendChild(actions);
+  return li;
+}
 
-    return li;
-  }
 
   function appendItemToDOM(item) {
     const li = createListItem(item);
