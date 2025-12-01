@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----- Elemen DOM -----
   const form = document.getElementById('todo-form');
   const input = document.getElementById('todo-input');
+  const notesInput = document.getElementById('todo-notes');
   const list = document.getElementById('todo-list');
   const errorMessage = document.getElementById('error-message');
   const emptyMsg = document.getElementById('empty-msg');
@@ -29,11 +30,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   hideError();
 
-  const item = {
-    id: Date.now().toString(),
-    text,
-    completed: false
-  };
+  const notes = notesInput.value.trim();
+
+const item = {
+  id: Date.now().toString(),
+  text,
+  notes: notes || "",   // simpan catatan
+  completed: false
+};
+
 
   items.push(item);
   saveToStorage(items);
@@ -46,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
   input.value = '';
   input.focus();
 });
-
 
   // ----- Event delegation for list (complete / delete) -----
   list.addEventListener('click', (e) => {
@@ -98,35 +102,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Functions -----
   function createListItem(item) {
-    const li = document.createElement('li');
-    li.className = 'todo-item' + (item.completed ? ' completed' : '');
-    li.dataset.id = item.id;
+  const li = document.createElement('li');
+  li.className = 'todo-item' + (item.completed ? ' completed' : '');
+  li.dataset.id = item.id;
 
-    const span = document.createElement('div');
-    span.className = 'text';
-    span.textContent = item.text;
+  /* === JUDUL === */
+  const title = document.createElement('div');
+  title.className = 'text';
+  title.textContent = item.text;
 
-    const actions = document.createElement('div');
-    actions.className = 'actions';
+  /* === CATATAN (HIDDEN) === */
+  const notesBox = document.createElement('div');
+  notesBox.className = "notes-box";
+  notesBox.style.display = "none";
+  notesBox.textContent = item.notes || "(Tidak ada catatan)";
 
-    const completeBtn = document.createElement('button');
-    completeBtn.type = 'button';
-    completeBtn.className = 'btn complete';
-    completeBtn.textContent = item.completed ? 'Batal' : 'Selesai';
-    completeBtn.setAttribute('aria-pressed', String(item.completed));
+  /* === TOGGLE BUTTON === */
+  const toggleBtn = document.createElement('button');
+  toggleBtn.className = "btn toggle";
+  toggleBtn.textContent = "Detail ▼";
+  toggleBtn.addEventListener('click', () => {
+    if (notesBox.style.display === "none") {
+      notesBox.style.display = "block";
+      toggleBtn.textContent = "Detail ▲";
+    } else {
+      notesBox.style.display = "none";
+      toggleBtn.textContent = "Detail ▼";
+    }
+  });
 
-    const delBtn = document.createElement('button');
-    delBtn.type = 'button';
-    delBtn.className = 'btn delete';
-    delBtn.textContent = 'Hapus';
+  /* === ACTION BUTTONS === */
+  const actions = document.createElement('div');
+  actions.className = 'actions';
 
-    actions.appendChild(completeBtn);
-    actions.appendChild(delBtn);
+  const completeBtn = document.createElement('button');
+  completeBtn.type = 'button';
+  completeBtn.className = 'btn complete';
+  completeBtn.textContent = item.completed ? 'Batal' : 'Selesai';
 
-    li.appendChild(span);
-    li.appendChild(actions);
-    return li;
-  }
+  const delBtn = document.createElement('button');
+  delBtn.type = 'button';
+  delBtn.className = 'btn delete';
+  delBtn.textContent = 'Hapus';
+
+  actions.appendChild(toggleBtn);
+  actions.appendChild(completeBtn);
+  actions.appendChild(delBtn);
+
+  /* === SUSUN ITEM === */
+  li.appendChild(title);
+  li.appendChild(notesBox);
+  li.appendChild(actions);
+
+  return li;
+}
+
 
   function appendItemToDOM(item) {
     const li = createListItem(item);
