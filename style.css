@@ -290,3 +290,36 @@ body{
   border-radius: 10px;
   transition: width 0.4s ease;
 }
+
+#todo-notes {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e5c4ff;
+    background: #faf5ff;
+    margin-top: 8px;
+    resize: vertical;
+}
+
+.notes-box {
+    background: #fff0fb;
+    border-left: 4px solid #f0a8d0;
+    padding: 10px 12px;
+    margin: 8px 0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #6b3e55;
+}
+
+.btn.toggle {
+    background: #FBCFE8;
+    color: #8B4A73;
+    padding: 6px 10px;
+    border-radius: 8px;
+    margin-right: 6px;
+    font-size: 0.85rem;
+}
+
+.btn.toggle:hover {
+    background: #F9A8D4;
+}
