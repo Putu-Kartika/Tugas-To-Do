@@ -6,12 +6,8 @@
   <title>To-Do List Interaktif</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-
-
 <body>
-
   <div id="toast-container"></div>
-  
   <header class="site-header">
     <h1>To-Do List</h1>
   </header>
@@ -20,18 +16,20 @@
     <section class="card">
       <h2>Tambah Tugas</h2>
 
-      <form id="todo-form" class="todo-form" novalidate>
-        <label for="todo-input" class="visually-hidden">Tugas</label>
-        <input
-          id="todo-input"
-          name="todo"
-          type="text"
-          placeholder="To - Do List"
-          required
-          autocomplete="off"
-        />
-        <button type="button" id="add-btn">Tambah</button>
-      </form>
+    <form id="todo-form" class="todo-form" novalidate>
+      <label for="todo-input" class="visually-hidden">Tugas</label>
+      <input
+    id="todo-input"
+    name="todo"
+    type="text"
+    placeholder="To - Do List"
+    required
+    autocomplete="off"/>
+  <!-- textarea catatan tambahan -->
+   <textarea id="todo-notes" placeholder="Catatan tambahan (opsional)"></textarea>
+   <button type="button" id="add-btn">Tambah</button>
+  </form>
+
 
       <p id="error-message" class="error-message" aria-live="polite"></p>
     </section>
@@ -46,7 +44,6 @@
       <div class="progress-fill"></div>
   </div>
 </div>
-
 
       <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
       <p id="empty-msg" class="empty-msg">Belum ada tugas. Tambahkan tugas baru!</p>
