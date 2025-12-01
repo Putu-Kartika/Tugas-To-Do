@@ -26,8 +26,16 @@
     required
     autocomplete="off"/>
   <!-- textarea catatan tambahan -->
-   <textarea id="todo-notes" placeholder="Catatan tambahan (opsional)"></textarea>
-   <button type="button" id="add-btn">Tambah</button>
+  <textarea id="todo-notes" placeholder="Catatan tambahan (opsional)"></textarea>
+
+  <!-- dropdown prioritas -->
+  <select id="todo-priority">
+    <option value="rendah">🟢 Rendah</option>
+    <option value="sedang" selected>🟡 Sedang</option>
+    <option value="tinggi">🔴 Tinggi</option>
+  </select>
+
+  <button type="button" id="add-btn">Tambah</button>
   </form>
 
       <p id="error-message" class="error-message" aria-live="polite"></p>
