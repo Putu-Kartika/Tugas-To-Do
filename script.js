@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearAllBtn = document.getElementById('clear-all');
   const addBtn = document.getElementById('add-btn');
 
+  // Stars gamification
+  const starDisplay = document.getElementById('star-count');
+  const rewardPopup = document.getElementById('reward-popup');
+  let starCount = 0;
+
   // ----- Storage key & state -----
   const STORAGE_KEY = 'todo_items_v1';
   let items = loadFromStorage();
@@ -17,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----- Initial render -----
   renderList();
   updateProgressBar();
+  starDisplay.textContent = starCount;
 
   // ----- Tombol Tambah -----
   addBtn.addEventListener('click', () => {
@@ -25,45 +31,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Form submit: add new todo -----
   form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const text = input.value.trim();
+    e.preventDefault();
+    const text = input.value.trim();
 
-  if (!text) {
-    showError('Nama tugas tidak boleh kosong!');
-    showToast("❗ Tugas tidak boleh kosong!", "error");
-    return;
-  }
-  hideError();
+    if (!text) {
+      showError('Nama tugas tidak boleh kosong!');
+      showToast("❗ Tugas tidak boleh kosong!", "error");
+      return;
+    }
+    hideError();
 
-  const notes = notesInput.value.trim();
-  const priority = document.getElementById('todo-priority').value; // ✅ ambil prioritas
+    const notes = notesInput.value.trim();
+    const priority = document.getElementById('todo-priority').value;
 
-  const item = {
-    id: Date.now().toString(),
-    text,
-    notes: notes || "",
-    priority, 
-    completed: false
-  };
+    const item = {
+      id: Date.now().toString(),
+      text,
+      notes: notes || "",
+      priority,
+      completed: false
+    };
 
-  items.push(item);
-  saveToStorage(items);
-  appendItemToDOM(item);
-  updateProgressBar();
+    items.push(item);
+    saveToStorage(items);
+    appendItemToDOM(item);
+    updateProgressBar();
 
-  showToast("➕ Tugas berhasil ditambahkan!", "success");
+    showToast("➕ Tugas berhasil ditambahkan!", "success");
 
-  input.value = '';
-  notesInput.value = '';
-  input.focus();
-});
-
+    input.value = '';
+    notesInput.value = '';
+    input.focus();
+  });
 
   // ----- Event delegation for list (complete / delete) -----
   list.addEventListener('click', (e) => {
     const target = e.target;
 
-    // COMPLETE button
     if (target.matches('.btn.complete')) {
       const li = target.closest('li');
       if (!li) return;
@@ -72,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // DELETE button
     if (target.matches('.btn.delete')) {
       const li = target.closest('li');
       if (!li) return;
@@ -88,87 +91,84 @@ document.addEventListener('DOMContentLoaded', () => {
     saveToStorage(items);
     renderList();
     updateProgressBar();
-
     showToast("🧹 Tugas selesai dibersihkan!", "success");
   });
 
   // ----- Clear all (confirm) -----
   clearAllBtn.addEventListener('click', () => {
     if (!confirm('Yakin ingin menghapus semua tugas?')) return;
-
     items = [];
     saveToStorage(items);
     renderList();
     updateProgressBar();
-
+    starCount = 0;
+    starDisplay.textContent = starCount;
     showToast("🗑️ Semua tugas dihapus.", "warning");
   });
 
   // ----- Functions -----
   function createListItem(item) {
-  const li = document.createElement('li');
-  li.className = 'todo-item' + (item.completed ? ' completed' : '');
-  li.dataset.id = item.id;
+    const li = document.createElement('li');
+    li.className = 'todo-item' + (item.completed ? ' completed' : '');
+    li.dataset.id = item.id;
 
-  // Judul
-  const title = document.createElement('div');
-  title.className = 'text';
-  title.textContent = item.text;
+    // Judul
+    const title = document.createElement('div');
+    title.className = 'text';
+    title.textContent = item.text;
 
-  // Label prioritas
-  const priorityLabel = document.createElement('span');
-  priorityLabel.className = 'priority-label priority-' + item.priority;
-  priorityLabel.textContent = item.priority === 'tinggi' ? '🔴 Tinggi' :
-                            item.priority === 'sedang' ? '🟡 Sedang' :
-                            '🟢 Rendah';
-  priorityLabel.title = "Tingkat prioritas tugas";
+    // Label prioritas
+    const priorityLabel = document.createElement('span');
+    priorityLabel.className = 'priority-label priority-' + item.priority;
+    priorityLabel.textContent = item.priority === 'tinggi' ? '🔴 Tinggi' :
+                              item.priority === 'sedang' ? '🟡 Sedang' :
+                              '🟢 Rendah';
+    priorityLabel.title = "Tingkat prioritas tugas";
 
-  // Catatan
-  const notesBox = document.createElement('div');
-  notesBox.className = "notes-box";
-  notesBox.style.display = "none";
-  notesBox.innerHTML = `
-    <div class="notes-title">Catatan:</div>
-    <div class="notes-content">${item.notes || "(Tidak ada catatan)"}</div>
-  `;
+    // Catatan
+    const notesBox = document.createElement('div');
+    notesBox.className = "notes-box";
+    notesBox.style.display = "none";
+    notesBox.innerHTML = `
+      <div class="notes-title">Catatan:</div>
+      <div class="notes-content">${item.notes || "(Tidak ada catatan)"}</div>
+    `;
 
-  // Toggle detail
-  const toggleBtn = document.createElement('button');
-  toggleBtn.className = "btn toggle";
-  toggleBtn.textContent = "Detail ▼";
-  toggleBtn.addEventListener('click', () => {
-    const show = notesBox.style.display === "none";
-    notesBox.style.display = show ? "block" : "none";
-    toggleBtn.textContent = show ? "Detail ▲" : "Detail ▼";
-  });
+    // Toggle detail
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = "btn toggle";
+    toggleBtn.textContent = "Detail ▼";
+    toggleBtn.addEventListener('click', () => {
+      const show = notesBox.style.display === "none";
+      notesBox.style.display = show ? "block" : "none";
+      toggleBtn.textContent = show ? "Detail ▲" : "Detail ▼";
+    });
 
-  // Action buttons
-  const actions = document.createElement('div');
-  actions.className = 'actions';
+    // Action buttons
+    const actions = document.createElement('div');
+    actions.className = 'actions';
 
-  const completeBtn = document.createElement('button');
-  completeBtn.type = 'button';
-  completeBtn.className = 'btn complete';
-  completeBtn.textContent = item.completed ? 'Batal' : 'Selesai';
+    const completeBtn = document.createElement('button');
+    completeBtn.type = 'button';
+    completeBtn.className = 'btn complete';
+    completeBtn.textContent = item.completed ? 'Batal' : 'Selesai';
 
-  const delBtn = document.createElement('button');
-  delBtn.type = 'button';
-  delBtn.className = 'btn delete';
-  delBtn.textContent = 'Hapus';
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'btn delete';
+    delBtn.textContent = 'Hapus';
 
-  actions.appendChild(toggleBtn);
-  actions.appendChild(completeBtn);
-  actions.appendChild(delBtn);
+    actions.appendChild(toggleBtn);
+    actions.appendChild(completeBtn);
+    actions.appendChild(delBtn);
 
-  
-  li.appendChild(title);
-  li.appendChild(priorityLabel);
-  li.appendChild(notesBox);
-  li.appendChild(actions);
+    li.appendChild(title);
+    li.appendChild(priorityLabel);
+    li.appendChild(notesBox);
+    li.appendChild(actions);
 
-  return li;
-}
-
+    return li;
+  }
 
   function appendItemToDOM(item) {
     const li = createListItem(item);
@@ -178,18 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderList() {
     list.innerHTML = '';
-
     if (!items.length) {
       updateEmptyState();
       updateProgressBar();
       return;
     }
-
     items.forEach(item => {
       const li = createListItem(item);
       list.appendChild(li);
     });
-
     updateEmptyState();
     updateProgressBar();
   }
@@ -201,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     items[idx].completed = !items[idx].completed;
     saveToStorage(items);
     updateProgressBar();
+    updateStars(items[idx].completed);
 
     if (items[idx].completed) {
       liElement.classList.add('completed');
@@ -214,11 +212,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function deleteItem(id, liElement) {
+    const wasCompleted = items.find(i => i.id === id)?.completed;
     items = items.filter(i => i.id !== id);
     saveToStorage(items);
     liElement.remove();
     updateEmptyState();
     updateProgressBar();
+    if (wasCompleted) updateStars(false);
     showToast("🗑️ Tugas dihapus.", "warning");
   }
 
@@ -237,31 +237,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Storage
   function saveToStorage(data) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (err) {
-      console.warn('localStorage error', err);
-    }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+    catch (err) { console.warn('localStorage error', err); }
   }
 
   function loadFromStorage() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       return raw ? JSON.parse(raw) : [];
-    } catch (err) {
-      return [];
-    }
+    } catch (err) { return []; }
   }
 
   function updateProgressBar() {
     const done = items.filter(i => i.completed).length;
     const total = items.length;
     const percent = total === 0 ? 0 : (done / total) * 100;
-
-    document.querySelector(".progress-text").textContent =
-      `${done} dari ${total} selesai`;
-
+    document.querySelector(".progress-text").textContent = `${done} dari ${total} selesai`;
     document.querySelector(".progress-fill").style.width = percent + "%";
+  }
+
+  // ----- Stars / Reward -----
+  function updateStars(completed) {
+    if (completed) starCount++;
+    else starCount = Math.max(0, starCount - 1);
+    starDisplay.textContent = starCount;
+
+    if (starCount >= 10) {
+      rewardPopup.classList.remove('hidden');
+      setTimeout(() => {
+        rewardPopup.classList.add('hidden');
+        starCount = 0;
+        starDisplay.textContent = starCount;
+      }, 3000);
+    }
   }
 });
 
