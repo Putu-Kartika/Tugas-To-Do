@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>To-Do List Interaktif</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>To-Do List Interaktif</h1>
+    <p class="lead">Tambah tugas, tandai selesai, dan hapus. (Client-side JS)</p>
+  </header>
+
+  <main class="container" role="main">
+    <section class="card">
+      <h2>Tambah Tugas</h2>
+
+      <form id="todo-form" class="todo-form" novalidate>
+        <label for="todo-input" class="visually-hidden">Tugas</label>
+        <input
+          id="todo-input"
+          name="todo"
+          type="text"
+          placeholder="Contoh: Baca bab 3"
+          required
+          autocomplete="off"
+        />
+        <button type="submit" id="add-btn">Tambah</button>
+      </form>
+
+      <p id="error-message" class="error-message" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>Daftar Tugas</h2>
+      <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
+      <p id="empty-msg" class="empty-msg">Belum ada tugas. Tambahkan tugas baru!</p>
+
+      <div class="controls">
+        <button id="clear-completed" type="button" class="btn small">Hapus Selesai</button>
+        <button id="clear-all" type="button" class="btn small warn">Kosongkan Semua</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <small>© 2025 • To-Do List Interaktif</small>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
