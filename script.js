@@ -1,5 +1,3 @@
-
-
 document.addEventListener('DOMContentLoaded', () => {
   // ----- Elemen DOM -----
   const form = document.getElementById('todo-form');
@@ -12,10 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Storage key & state -----
   const STORAGE_KEY = 'todo_items_v1';
-  let items = loadFromStorage(); // array of {id, text, completed}
+  let items = loadFromStorage();
 
   // ----- Initial render -----
   renderList();
+  updateProgressBar();
 
   // ----- Form submit: add new todo -----
   form.addEventListener('submit', (e) => {
@@ -39,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   items.push(item);
   saveToStorage(items);
   appendItemToDOM(item);
+  updateProgressBar();
 
   // ➕ Toast sukses tambah
   showToast("➕ Tugas berhasil ditambahkan!", "success");
@@ -76,10 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
   items = items.filter(i => !i.completed);
   saveToStorage(items);
   renderList();
+  updateProgressBar();
 
   showToast("🧹 Tugas selesai dibersihkan!", "success");
 });
-
 
 
   // ----- Clear all (confirm) -----
@@ -89,8 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
   items = [];
   saveToStorage(items);
   renderList();
+  updateProgressBar();
 
   showToast("🗑️ Semua tugas dihapus.", "warning");
+
 });
 
 
@@ -134,16 +136,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderList() {
     list.innerHTML = '';
+
     if (!items.length) {
-      updateEmptyState();
-      return;
+        updateEmptyState();
+        updateProgressBar();
+        return;
     }
+
     items.forEach(item => {
-      const li = createListItem(item);
-      list.appendChild(li);
+        const li = createListItem(item);
+        list.appendChild(li);
     });
+
     updateEmptyState();
-  }
+    updateProgressBar();
+}
+
 
   function toggleComplete(id, liElement) {
   const idx = items.findIndex(i => i.id === id);
@@ -151,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   items[idx].completed = !items[idx].completed;
   saveToStorage(items);
+  updateProgressBar();
 
   if (items[idx].completed) {
     liElement.classList.add('completed');
@@ -170,18 +179,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 }
 
-
   function deleteItem(id, liElement) {
   items = items.filter(i => i.id !== id);
   saveToStorage(items);
+  updateProgressBar();
 
   liElement.remove();
   updateEmptyState();
 
   // 🗑️ Toast hapus
   showToast("🗑️ Tugas dihapus.", "warning");
-}
 
+}
 
   function updateEmptyState() {
     emptyMsg.style.display = items.length ? 'none' : 'block';
@@ -214,6 +223,18 @@ document.addEventListener('DOMContentLoaded', () => {
       return [];
     }
   }
+
+  function updateProgressBar() {
+  const done = items.filter(i => i.completed).length;
+  const total = items.length;
+  const percent = total === 0 ? 0 : (done / total) * 100;
+
+  document.querySelector(".progress-text").textContent =
+    `${done} dari ${total} selesai`;
+
+  document.querySelector(".progress-fill").style.width = percent + "%";
+}
+
 });
 
 // ===========================
